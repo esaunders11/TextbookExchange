@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Register = ({ onLogin }) => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -71,7 +72,7 @@ const Register = ({ onLogin }) => {
 
       const data = await response.json();
       onLogin(data.user);
-      window.location.href = '/login';
+      navigate('/');
     } catch (err) {
       setError(err.message);
     } finally {

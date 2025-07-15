@@ -9,15 +9,30 @@ const Home = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCondition, setSelectedCondition] = useState('');
   const [priceRange, setPriceRange] = useState({ min: '', max: '' });
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    fetchBooks();
+    // Check if user is logged in
+    const token = localStorage.getItem('token');
+    setIsLoggedIn(!!token);
+    
+    if (token) {
+      fetchBooks();
+    } else {
+      setLoading(false);
+    }
   }, []);
 
   const fetchBooks = async () => {
     try {
+      const token = localStorage.getItem('token');
       setLoading(true);
-      const response = await fetch('/api/books');
+      const response = await fetch('/api/books', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       if (!response.ok) {
         throw new Error('Failed to fetch books');
       }
@@ -81,6 +96,25 @@ const Home = () => {
       <h1>Browse Textbooks</h1>
       <p>Find used textbooks from NCSU students</p>
       
+      {!isLoggedIn && (
+        <div className="welcome-message card">
+          <h2>Welcome to the NCSU Textbook Exchange!</h2>
+          <p>
+            This is a student-to-student platform where NC State students can buy and sell 
+            used textbooks at affordable prices. Join our community to:
+          </p>
+          <ul>
+            <li>Browse textbooks from fellow students</li>
+            <li>Save money on required course materials</li>
+            <li>Sell your books when you're done with them</li>
+            <li>Connect with other students in your classes</li>
+          </ul>
+          <p>
+            <strong>Please log in or create an account to start buying and selling textbooks!</strong>
+          </p>
+        </div>
+      )}
+      
       <SearchFilters 
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
@@ -91,15 +125,21 @@ const Home = () => {
         onSearch={handleSearch}
       />
       
-      {filteredBooks.length === 0 ? (
-        <div className="card">
-          <p>No books found matching your criteria.</p>
-        </div>
+      {isLoggedIn ? (
+        filteredBooks.length === 0 ? (
+          <div className="card">
+            <p>No books found matching your criteria.</p>
+          </div>
+        ) : (
+          <div className="card-grid">
+            {filteredBooks.map(book => (
+              <BookCard key={book.id} book={book} />
+            ))}
+          </div>
+        )
       ) : (
-        <div className="card-grid">
-          {filteredBooks.map(book => (
-            <BookCard key={book.id} book={book} />
-          ))}
+        <div className="card">
+          <p>Please log in to view available textbooks.</p>
         </div>
       )}
     </div>

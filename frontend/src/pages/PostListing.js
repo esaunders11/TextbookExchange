@@ -10,7 +10,6 @@ const PostListing = ({ user }) => {
     price: '',
     condition: '',
     description: '',
-    courseName: '',
     courseCode: ''
   });
   const [loading, setLoading] = useState(false);
@@ -40,7 +39,7 @@ const PostListing = ({ user }) => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/books', {
+      const response = await fetch('/api/books/post-listing', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -65,7 +64,6 @@ const PostListing = ({ user }) => {
         price: '',
         condition: '',
         description: '',
-        courseName: '',
         courseCode: ''
       });
       
@@ -135,18 +133,6 @@ const PostListing = ({ user }) => {
             value={formData.courseCode}
             onChange={handleChange}
             placeholder="e.g., CSC 116, ENG 101"
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="courseName">Course Name</label>
-          <input
-            type="text"
-            id="courseName"
-            name="courseName"
-            value={formData.courseName}
-            onChange={handleChange}
-            placeholder="e.g., Introduction to Computing"
           />
         </div>
 
