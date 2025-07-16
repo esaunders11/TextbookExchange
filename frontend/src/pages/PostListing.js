@@ -71,7 +71,7 @@ const PostListing = ({ user }) => {
         navigate('/my-listings');
       }, 2000);
     } catch (err) {
-      setError(err.message);
+      setError("Failed to create listing. Please try again.");
     } finally {
       setLoading(false);
     }

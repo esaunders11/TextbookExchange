@@ -44,7 +44,7 @@ const Profile = ({ user }) => {
       setSuccess('Profile updated successfully!');
       setEditing(false);
     } catch (err) {
-      setError(err.message);
+      setError("Unable to update profile. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -148,13 +148,6 @@ const Profile = ({ user }) => {
             <label>Email Address</label>
             <p style={{ padding: '0.75rem', border: '1px solid #ddd', borderRadius: '4px', backgroundColor: '#f9f9f9' }}>
               {user.email}
-            </p>
-          </div>
-
-          <div className="form-group">
-            <label>Member Since</label>
-            <p style={{ padding: '0.75rem', border: '1px solid #ddd', borderRadius: '4px', backgroundColor: '#f9f9f9' }}>
-              {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Unknown'}
             </p>
           </div>
 

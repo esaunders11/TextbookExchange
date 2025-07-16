@@ -41,7 +41,7 @@ const Login = ({ onLogin }) => {
       onLogin(data.user);
       window.location.href = '/';
     } catch (err) {
-      setError(err.message);
+      setError("Login Failed.");
     } finally {
       setLoading(false);
     }

@@ -72,9 +72,9 @@ const Register = ({ onLogin }) => {
 
       const data = await response.json();
       onLogin(data.user);
-      navigate('/');
+      navigate('/login');
     } catch (err) {
-      setError(err.message);
+      setError("Registration Failed");
     } finally {
       setLoading(false);
     }
