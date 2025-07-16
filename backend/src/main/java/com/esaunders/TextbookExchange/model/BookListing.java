@@ -30,6 +30,7 @@ public class BookListing {
     private String courseCode;
     private double price;
     private String condition;
+    private String description;
 
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)

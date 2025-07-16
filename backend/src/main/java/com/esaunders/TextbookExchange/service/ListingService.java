@@ -31,7 +31,6 @@ public class ListingService {
     }
 
     public boolean checkCourseCodeValid(String courseCode) {
-        // Regex: 1-3 letters followed by 3 digits
         return courseCode != null && courseCode.matches("^[A-Za-z]{1,3}\\d{3}$");
     }
 }
