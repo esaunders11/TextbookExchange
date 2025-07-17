@@ -1,4 +1,3 @@
-// services/api.js
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080/api';
 
 class ApiService {
@@ -8,12 +7,11 @@ class ApiService {
 
   async request(endpoint, options = {}) {
     const url = `${this.baseURL}${endpoint}`;
-    const token = localStorage.getItem('token');
-
+    
     const config = {
+      credentials: 'include', // Important for SAML session cookies
       headers: {
         'Content-Type': 'application/json',
-        ...(token && { 'Authorization': `Bearer ${token}` }),
         ...options.headers,
       },
       ...options,
@@ -22,6 +20,12 @@ class ApiService {
     try {
       const response = await fetch(url, config);
       
+      if (response.status === 401) {
+        // Redirect to SAML login
+        window.location.href = `${this.baseURL}/auth/login`;
+        return null;
+      }
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
@@ -35,23 +39,15 @@ class ApiService {
   }
 
   // Authentication
-  async login(credentials) {
-    return this.request('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify(credentials),
-    });
-  }
-
-  async register(userData) {
-    return this.request('/auth/register', {
-      method: 'POST',
-      body: JSON.stringify(userData),
-    });
-  }
-
-  async verifyToken() {
+  async verifySession() {
     return this.request('/auth/verify', {
       method: 'GET',
+    });
+  }
+
+  async logout() {
+    return this.request('/auth/logout', {
+      method: 'POST',
     });
   }
 
@@ -115,7 +111,7 @@ class ApiService {
     });
   }
 
-  // Future: Chat/Messaging
+  // Future: Chat/Messaging endpoints remain the same
   async getConversations() {
     return this.request('/messages/conversations', {
       method: 'GET',

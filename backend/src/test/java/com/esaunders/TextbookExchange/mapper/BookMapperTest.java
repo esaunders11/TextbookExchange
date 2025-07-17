@@ -24,7 +24,7 @@ class BookMapperTest {
         // Create test user
         testUser = new User();
         testUser.setId(1L);
-        testUser.setFirstName("testuser");
+        testUser.setName("testuser");
         testUser.setEmail("test@example.com");
 
         // Create test book listing

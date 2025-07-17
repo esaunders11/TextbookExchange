@@ -1,70 +1,31 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import BookCard from '../components/BookCard';
 import SearchFilters from '../components/SearchFilters';
+import api from '../services/api';
+import '../styles/Home.css';
 
 const Home = () => {
   const [books, setBooks] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCondition, setSelectedCondition] = useState('');
   const [priceRange, setPriceRange] = useState({ min: '', max: '' });
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
-  useEffect(() => {
-    // Check if user is logged in
-    const token = localStorage.getItem('token');
-    setIsLoggedIn(!!token);
-    
-    if (token) {
-      fetchBooks();
-    } else {
-      setLoading(false);
-    }
-  }, []);
-
-  const fetchBooks = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      setLoading(true);
-      const response = await fetch('/api/books', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      if (!response.ok) {
-        throw new Error('Failed to fetch books');
-      }
-      const data = await response.json();
-      setBooks(data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+  const handleLogin = () => {
+    window.location.href = `${api.baseURL}/auth/login`;
   };
 
   const handleSearch = async (filters) => {
+    if (!showLoginPrompt) {
+      setShowLoginPrompt(true);
+      return;
+    }
+
     try {
       setLoading(true);
-      const queryParams = new URLSearchParams();
-      
-      if (filters.searchTerm) queryParams.append('search', filters.searchTerm);
-      if (filters.condition) queryParams.append('condition', filters.condition);
-      if (filters.minPrice) queryParams.append('minPrice', filters.minPrice);
-      if (filters.maxPrice) queryParams.append('maxPrice', filters.maxPrice);
-      
-      const response = await fetch(`/api/books/search?${queryParams}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      if (!response.ok) {
-        throw new Error('Failed to search books');
-      }
-      const data = await response.json();
+      const data = await api.searchBooks(filters);
       setBooks(data);
     } catch (err) {
       setError(err.message);
@@ -97,29 +58,43 @@ const Home = () => {
   }
 
   return (
-    <div>
-      <h1>Browse Textbooks</h1>
-      <p>Find used textbooks from NCSU students</p>
-      
-      {!isLoggedIn && (
-        <div className="welcome-message card">
-          <h2>Welcome to the NCSU Textbook Exchange!</h2>
-          <p>
-            This is a student-to-student platform where NC State students can buy and sell 
-            used textbooks at affordable prices. Join our community to:
-          </p>
-          <ul>
-            <li>Browse textbooks from fellow students</li>
-            <li>Save money on required course materials</li>
-            <li>Sell your books when you're done with them</li>
-            <li>Connect with other students in your classes</li>
-          </ul>
-          <p>
-            <strong>Please log in or create an account to start buying and selling textbooks!</strong>
-          </p>
+    <div className="home-container">
+      <div className="welcome-banner">
+        <h1>Welcome to NCSU Textbook Exchange</h1>
+        <p>A student-to-student platform for buying and selling textbooks</p>
+      </div>
+
+      <div className="features-grid">
+        <div className="feature-card">
+          <h3>Save Money</h3>
+          <p>Find affordable textbooks from fellow students</p>
+        </div>
+        <div className="feature-card">
+          <h3>Easy Exchange</h3>
+          <p>Connect directly with buyers and sellers on campus</p>
+        </div>
+        <div className="feature-card">
+          <h3>Student Community</h3>
+          <p>Join a trusted network of NCSU students</p>
+        </div>
+      </div>
+
+      <div className="cta-section">
+        <h2>Ready to get started?</h2>
+        <button onClick={handleLogin} className="btn btn-primary login-btn">
+          Login with NC State
+        </button>
+      </div>
+
+      {showLoginPrompt && (
+        <div className="login-prompt">
+          <p>Please log in to search and view textbook listings.</p>
+          <button onClick={handleLogin} className="btn btn-primary">
+            Login with NC State
+          </button>
         </div>
       )}
-      
+
       <SearchFilters 
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
@@ -130,22 +105,23 @@ const Home = () => {
         onSearch={handleSearch}
       />
       
-      {isLoggedIn ? (
-        filteredBooks.length === 0 ? (
-          <div className="card">
-            <p>No books found matching your criteria.</p>
-          </div>
-        ) : (
+      {showLoginPrompt ? (
+        <div className="login-required-message">
+          <h3>Browse Available Textbooks</h3>
+          <p>Log in to view and search through available textbooks from NCSU students.</p>
+        </div>
+      ) : (
+        filteredBooks.length > 0 ? (
           <div className="card-grid">
             {filteredBooks.map(book => (
               <BookCard key={book.id} book={book} />
             ))}
           </div>
+        ) : (
+          <div className="no-results">
+            <p>No books found matching your criteria.</p>
+          </div>
         )
-      ) : (
-        <div className="card">
-          <p>Please log in to view available textbooks.</p>
-        </div>
       )}
     </div>
   );

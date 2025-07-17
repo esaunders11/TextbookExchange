@@ -33,12 +33,12 @@ class BookListingRepositoryTest {
     void setUp() {
         // Create test users
         testUser1 = new User();
-        testUser1.setFirstName("testuser1");
+        testUser1.setName("testuser1");
         testUser1.setEmail("test1@example.com");
         testUser1 = entityManager.persistAndFlush(testUser1);
 
         testUser2 = new User();
-        testUser2.setFirstName("testuser2");
+        testUser2.setName("testuser2");
         testUser2.setEmail("test2@example.com");
         testUser2 = entityManager.persistAndFlush(testUser2);
 
@@ -129,7 +129,7 @@ class BookListingRepositoryTest {
 
         // Test with user who has no books
         User userWithNoBooks = new User();
-        userWithNoBooks.setFirstName("nobooksuser");
+        userWithNoBooks.setName("nobooksuser");
         userWithNoBooks.setEmail("nobooks@example.com");
         userWithNoBooks = entityManager.persistAndFlush(userWithNoBooks);
 

@@ -28,10 +28,7 @@ public class ProfileController {
         }
         
         if (updateRequest.getFirstName() != null) {
-            user.setFirstName(updateRequest.getFirstName());
-        }
-        if (updateRequest.getLastName() != null) {
-            user.setLastName(updateRequest.getLastName());
+            user.setName(updateRequest.getFirstName());
         }
         userRepository.save(user);
         return ResponseEntity.ok("Profile updated successfully");
