@@ -1,7 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
-const Header = ({ user, onLogout }) => {
+const Header = () => {
+  const { isAuthenticated, user, logout } = useAuth();
+
   return (
     <header className="header">
       <div className="header-content">
@@ -12,14 +15,14 @@ const Header = ({ user, onLogout }) => {
         <nav className="nav-links">
           <Link to="/">Browse Books</Link>
           
-          {user ? (
+          {isAuthenticated ? (
             <>
               <Link to="/post-listing">Post Listing</Link>
               <Link to="/my-listings">My Listings</Link>
               <Link to="/profile">Profile</Link>
               <div className="auth-links">
-                <span>Welcome, {user.firstName}!</span>
-                <button className="btn btn-secondary" onClick={onLogout}>
+                <span>Welcome, {user?.firstName || user?.email || 'User'}!</span>
+                <button className="btn btn-secondary" onClick={logout}>
                   Logout
                 </button>
               </div>

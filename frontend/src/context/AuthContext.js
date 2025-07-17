@@ -1,19 +1,10 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 
-interface AuthContextType {
-  isAuthenticated: boolean;
-  user: any;
-  login: () => void;
-  logout: () => void;
-  loginWithSaml2: () => void;
-  checkSession: () => Promise<void>;
-}
+const AuthContext = createContext(null);
 
-const AuthContext = createContext<AuthContextType | null>(null);
-
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [user, setUser] = useState<any>(null);
+export function AuthProvider({ children }) {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState(null);
 
   const login = () => {
     window.location.href = '/api/auth/login';
