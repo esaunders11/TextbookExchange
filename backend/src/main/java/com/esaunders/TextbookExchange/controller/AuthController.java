@@ -26,8 +26,11 @@ import com.esaunders.TextbookExchange.mapper.UserMapper;
 import com.esaunders.TextbookExchange.model.User;
 import com.esaunders.TextbookExchange.repository.UserRepository;
 import com.esaunders.TextbookExchange.service.JwtService;
+import com.esaunders.TextbookExchange.service.Saml2UserDetailsService;
 import com.esaunders.TextbookExchange.service.UserService;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 
 @RestController
@@ -41,6 +44,7 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
     private PasswordEncoder passwordEncoder;
     private JwtService jwtService;
+    private Saml2UserDetailsService saml2UserDetailsService;
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest loginRequest) {
@@ -81,5 +85,51 @@ public class AuthController {
         }
         UserDto userDto = userMapper.toUserDto(user);
         return ResponseEntity.ok(userDto);
+    }
+
+    // SAML2 endpoints - placeholder for future implementation
+    @GetMapping("/saml2/login")
+    public void saml2Login(HttpServletResponse response) throws Exception {
+        // Placeholder: Will redirect to SAML2 login when implemented
+        response.sendRedirect("https://shib.ncsu.edu/idp/shibboleth");
+    }
+
+    @PostMapping("/saml2/success")
+    public ResponseEntity<?> saml2Success(HttpServletRequest request) {
+        // Placeholder: Will handle SAML2 success callback when implemented
+        return ResponseEntity.ok("SAML2 authentication placeholder");
+    }
+
+    @GetMapping("/saml2/failure")
+    public ResponseEntity<?> saml2Failure() {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("SAML2 authentication failed");
+    }
+
+    @GetMapping("/session")
+    public ResponseEntity<Map<String, Object>> getSessionStatus() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Map<String, Object> response = new HashMap<>();
+        
+        if (authentication != null && authentication.isAuthenticated() && 
+            !authentication.getPrincipal().equals("anonymousUser")) {
+            response.put("authenticated", true);
+            User user = userService.getAuthenticatedUser();
+            if (user != null) {
+                response.put("user", userMapper.toUserDto(user));
+            }
+        } else {
+            response.put("authenticated", false);
+        }
+        
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request) {
+        SecurityContextHolder.clearContext();
+        if (request.getSession(false) != null) {
+            request.getSession().invalidate();
+        }
+        return ResponseEntity.ok().build();
     }
 }

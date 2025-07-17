@@ -16,6 +16,7 @@ class ApiService {
         ...(token && { 'Authorization': `Bearer ${token}` }),
         ...options.headers,
       },
+      credentials: 'include', // Important for SAML2 session cookies
       ...options,
     };
 
@@ -23,6 +24,11 @@ class ApiService {
       const response = await fetch(url, config);
       
       if (!response.ok) {
+        if (response.status === 401) {
+          // Redirect to SAML2 login if session expired
+          window.location.href = '/api/auth/saml2/login';
+          return;
+        }
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
       }
@@ -52,6 +58,19 @@ class ApiService {
   async verifyToken() {
     return this.request('/auth/verify', {
       method: 'GET',
+    });
+  }
+
+  // SAML2 Authentication
+  async getSessionStatus() {
+    return this.request('/auth/session', {
+      method: 'GET',
+    });
+  }
+
+  async logout() {
+    return this.request('/auth/logout', {
+      method: 'POST',
     });
   }
 

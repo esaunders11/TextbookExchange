@@ -19,15 +19,18 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.esaunders.TextbookExchange.service.Saml2UserDetailsService;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private JwtAuthenticationFilter jwtAuthFilter;
+    private final JwtAuthenticationFilter jwtAuthFilter;
+    private final Saml2UserDetailsService saml2UserDetailsService;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
-        jwtAuthFilter = jwtAuthenticationFilter;
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, Saml2UserDetailsService saml2UserDetailsService) {
+        this.jwtAuthFilter = jwtAuthenticationFilter;
+        this.saml2UserDetailsService = saml2UserDetailsService;
     }
 
     @Bean
@@ -63,14 +66,15 @@ public class SecurityConfig {
                 .requestMatchers(
                     "/api/auth/**",
                     "/api/books/**",
-                    "/api/listings/**"
+                    "/api/listings/**",
+                    "/api/auth/saml2/**"
                 ).permitAll()
                 // All other endpoints require authentication
                 .anyRequest().authenticated()
             )
             .httpBasic(AbstractHttpConfigurer::disable) // Disable HTTP Basic Auth to prevent browser popups
             .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // Changed from STATELESS to support SAML2 sessions
             )
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
