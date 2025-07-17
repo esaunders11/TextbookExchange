@@ -6,7 +6,7 @@ const Header = ({ user, onLogout }) => {
     <header className="header">
       <div className="header-content">
         <Link to="/" className="logo">
-          📚 NCSU Textbook Exchange
+          🐺 NCSU Textbook Exchange
         </Link>
         
         <nav className="nav-links">

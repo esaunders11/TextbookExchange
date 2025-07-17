@@ -1,4 +1,5 @@
 import React from 'react';
+import dayjs from 'dayjs';
 
 const BookCard = ({ book }) => {
   const getConditionClass = (condition) => {
@@ -75,7 +76,7 @@ const BookCard = ({ book }) => {
         
         {book.createdAt && (
           <small style={{ color: '#999', display: 'block', marginTop: '0.5rem' }}>
-            Posted: {new Date(book.createdAt).toLocaleDateString()}
+            Posted: {dayjs(book.createdAt).format('MMM D, YYYY')}
           </small>
         )}
       </div>

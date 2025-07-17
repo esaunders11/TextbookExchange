@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import dayjs from 'dayjs';
 
 const MyListings = ({ user }) => {
   const [listings, setListings] = useState([]);
@@ -155,7 +156,7 @@ const MyListings = ({ user }) => {
                 </div>
                 
                 <small style={{ color: '#999', display: 'block', marginTop: '0.5rem' }}>
-                  Posted: {new Date(listing.createdAt).toLocaleDateString()}
+                  Posted: {dayjs(listing.createdAt).format('MMM D, YYYY')}
                 </small>
               </div>
             </div>

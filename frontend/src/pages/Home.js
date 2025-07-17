@@ -55,7 +55,12 @@ const Home = () => {
       if (filters.minPrice) queryParams.append('minPrice', filters.minPrice);
       if (filters.maxPrice) queryParams.append('maxPrice', filters.maxPrice);
       
-      const response = await fetch(`/api/books/search?${queryParams}`);
+      const response = await fetch(`/api/books/search?${queryParams}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
       if (!response.ok) {
         throw new Error('Failed to search books');
       }

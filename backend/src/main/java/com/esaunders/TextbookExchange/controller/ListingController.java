@@ -38,14 +38,20 @@ public class ListingController {
     @GetMapping
     public ResponseEntity<List<BookDto>> getAllBooks() {
         User user = userService.getAuthenticatedUser();
-        if (user == null) {
-            return ResponseEntity.ok(bookListingRepository.findAll().stream()
-                .map(bookMapper::toBookDto)
-                .collect(Collectors.toList()));
-        }
-        List<BookDto> books = listingService.getAllBooks().stream()
-            .filter(book -> book.getOwnerId() == null || !book.getOwnerId().equals(user.getId()))
+
+        List<BookDto> books = bookListingRepository.findAll().stream()
+            .map(bookMapper::toBookDto)
+            .filter(book -> user == null || book.getOwnerId() == null || !book.getOwnerId().equals(user.getId()))
+            .sorted((a, b) -> {
+                // Sort by postedAt descending (most recent first)
+                if (a.getPostedAt() == null && b.getPostedAt() == null) return 0;
+                if (a.getPostedAt() == null) return 1;
+                if (b.getPostedAt() == null) return -1;
+                return b.getPostedAt().compareTo(a.getPostedAt());
+            })
+            .limit(10)
             .collect(Collectors.toList());
+
         return ResponseEntity.ok(books);
     }
 

@@ -31,6 +31,17 @@ const PostListing = ({ user }) => {
     }));
   };
 
+  const sanitizeFormData = (data) => ({
+    ...data,
+    title: data.title.trim(),
+    author: data.author.trim(),
+    isbn: data.isbn.trim(),
+    price: data.price, // will be parsed as float later
+    condition: data.condition.trim(),
+    description: data.description.trim(),
+    courseCode: data.courseCode.replace(/\s+/g, '').toUpperCase(), // remove all spaces and uppercase
+  });
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -39,6 +50,7 @@ const PostListing = ({ user }) => {
 
     try {
       const token = localStorage.getItem('token');
+      const cleanedData = sanitizeFormData(formData);
       const response = await fetch('/api/books/post-listing', {
         method: 'POST',
         headers: {
@@ -46,8 +58,8 @@ const PostListing = ({ user }) => {
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          ...formData,
-          price: parseFloat(formData.price)
+          ...cleanedData,
+          price: parseFloat(cleanedData.price)
         }),
       });
 
