@@ -13,24 +13,24 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check session status on mount
     checkAuthStatus();
   }, []);
 
   const checkAuthStatus = async () => {
     try {
       const userData = await api.verifySession();
-      setUser(userData);
-    } catch (error) {
-      console.error('Session check failed:', error);
-      setUser(null);
+      // Only set user if we got valid data back
+      if (userData) {
+        setUser(userData);
+      } else {
+        setUser(null);
+      }
     } finally {
       setLoading(false);
     }
   };
 
   const handleLogin = () => {
-    // Redirect to SAML login
     window.location.href = `${api.baseURL}/auth/login`;
   };
 
@@ -56,17 +56,16 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route 
               path="/post-listing" 
-              element={user ? <PostListing user={user} /> : <Navigate to="/" state={{ showLogin: true }} />} 
+              element={user ? <PostListing user={user} /> : <Navigate to="/" />} 
             />
             <Route 
               path="/my-listings" 
-              element={user ? <MyListings user={user} /> : <Navigate to="/" state={{ showLogin: true }} />} 
+              element={user ? <MyListings user={user} /> : <Navigate to="/" />} 
             />
             <Route 
               path="/profile" 
-              element={user ? <Profile user={user} /> : <Navigate to="/" state={{ showLogin: true }} />} 
+              element={user ? <Profile user={user} /> : <Navigate to="/" />} 
             />
-            {/* Add route for SAML callback */}
             <Route 
               path="/auth/success" 
               element={<AuthCallback onSuccess={checkAuthStatus} />} 
@@ -78,7 +77,6 @@ function App() {
   );
 }
 
-// New component to handle SAML callback
 function AuthCallback({ onSuccess }) {
   useEffect(() => {
     onSuccess();
