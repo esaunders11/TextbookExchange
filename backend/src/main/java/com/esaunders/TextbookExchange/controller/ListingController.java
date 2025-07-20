@@ -28,7 +28,7 @@ import lombok.AllArgsConstructor;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/books")
-@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+@CrossOrigin(origins = "https://textbook-exchange-six.vercel.app", allowCredentials = "true")
 public class ListingController {
     private BookListingRepository bookListingRepository;
     private BookMapper bookMapper;

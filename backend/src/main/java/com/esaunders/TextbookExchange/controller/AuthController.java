@@ -33,7 +33,7 @@ import lombok.AllArgsConstructor;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+@CrossOrigin(origins = "https://textbook-exchange-six.vercel.app", allowCredentials = "true")
 public class AuthController {
     private UserRepository userRepository;
     private UserService userService;
