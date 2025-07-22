@@ -7,7 +7,8 @@ const SearchFilters = ({
   setSelectedCondition,
   priceRange,
   setPriceRange,
-  onSearch 
+  onSearch,
+  isLoggedIn
 }) => {
   const conditions = [
     { value: '', label: 'All Conditions' },
@@ -104,7 +105,12 @@ const SearchFilters = ({
         </div>
 
         <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-          <button type="submit" className="btn btn-primary">
+          <button
+            type="submit"
+            className="btn btn-primary"
+            disabled={!isLoggedIn}
+            title={!isLoggedIn ? "Please log in to search books" : undefined}
+          >
             Search Books
           </button>
           <button type="button" className="btn btn-secondary" onClick={handleReset}>

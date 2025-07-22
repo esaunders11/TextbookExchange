@@ -128,6 +128,7 @@ const Home = () => {
         priceRange={priceRange}
         setPriceRange={setPriceRange}
         onSearch={handleSearch}
+        isLoggedIn={isLoggedIn}
       />
       
       {isLoggedIn ? (
