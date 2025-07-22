@@ -10,20 +10,36 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Entity representing a user in the system.
+ * Maps to the users table in the database.
+ * @author Ethan Saunders
+ */
 @Entity
 @Table(name = "users")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
+    /** The unique identifier of the user. */
     @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    /** The user's first name. */
     private String firstName;
+
+    /** The user's last name. */
     private String lastName;
+
+    /** The user's email address (must be unique and not null). */
     @Column(unique = true, nullable = false)
     private String email;
+
+    /** The user's password (not null). */
     @Column(nullable = false)
     private String password;
+
+    /** Whether the user is verified. */
     private boolean verified;
 }

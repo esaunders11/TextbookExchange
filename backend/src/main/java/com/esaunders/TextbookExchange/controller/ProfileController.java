@@ -14,21 +14,40 @@ import com.esaunders.TextbookExchange.service.UserService;
 
 import lombok.AllArgsConstructor;
 
+/**
+ * Controller for user profile-related endpoints.
+ * Handles updating the user's profile information.
+ * @author Ethan Saunders
+ */
 @RestController
 @RequestMapping("/api/users/profile")
 @AllArgsConstructor
 @CrossOrigin(origins = "http://textbook-exchange-4ago.vercel.app", allowCredentials = "true")
 public class ProfileController {
+
+    /**
+     * Repository for user data access.
+     */
     private UserRepository userRepository;
+
+    /**
+     * Service for user-related operations.
+     */
     private UserService userService;
 
+    /**
+     * Updates the authenticated user's profile with new first and/or last name.
+     *
+     * @param updateRequest the request containing updated profile fields
+     * @return a response entity indicating success or error
+     */
     @PutMapping
     public ResponseEntity<?> updateProfile(@RequestBody UpdateRequest updateRequest) {
         var user = userService.getAuthenticatedUser();
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
         }
-        
+
         if (updateRequest.getFirstName() != null) {
             user.setFirstName(updateRequest.getFirstName());
         }

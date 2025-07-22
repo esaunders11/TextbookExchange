@@ -19,27 +19,56 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-
+/**
+ * Security configuration for the application.
+ * Configures JWT authentication, CORS, session management, and endpoint security.
+ * @author Ethan Saunders
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
+    /**
+     * Filter for processing JWT authentication.
+     */
     private JwtAuthenticationFilter jwtAuthFilter;
 
+    /**
+     * Constructor for injecting the JWT authentication filter.
+     *
+     * @param jwtAuthenticationFilter the JWT authentication filter
+     */
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
         jwtAuthFilter = jwtAuthenticationFilter;
     }
 
+    /**
+     * Provides a BCrypt password encoder bean.
+     *
+     * @return the password encoder
+     */
     @Bean
     public PasswordEncoder passwordEncorder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Provides the authentication manager bean.
+     *
+     * @param config the authentication configuration
+     * @return the authentication manager
+     * @throws Exception if an error occurs
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
+    /**
+     * Configures CORS for the application.
+     *
+     * @return the CORS configuration source
+     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
@@ -53,22 +82,28 @@ public class SecurityConfig {
         return source;
     }
 
+    /**
+     * Configures the security filter chain, including endpoint authorization,
+     * session management, CORS, CSRF, and JWT filter.
+     *
+     * @param http the HTTP security builder
+     * @return the security filter chain
+     * @throws Exception if an error occurs
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .cors(Customizer.withDefaults())
             .authorizeHttpRequests(auth -> auth
-                // Allow public access to these endpoints
                 .requestMatchers(
                     "/api/auth/**",
                     "/api/books/**",
                     "/api/listings/**"
                 ).permitAll()
-                // All other endpoints require authentication
                 .anyRequest().authenticated()
             )
-            .httpBasic(AbstractHttpConfigurer::disable) // Disable HTTP Basic Auth to prevent browser popups
+            .httpBasic(AbstractHttpConfigurer::disable)
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )

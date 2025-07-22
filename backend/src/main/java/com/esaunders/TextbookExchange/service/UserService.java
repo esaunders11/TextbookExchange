@@ -11,11 +11,22 @@ import com.esaunders.TextbookExchange.repository.UserRepository;
 
 import lombok.AllArgsConstructor;
 
+/**
+ * Service for user-related operations.
+ * Handles retrieval of the authenticated user from the security context.
+ * @author Ethan Saunders
+ */
 @AllArgsConstructor
 @Service
 public class UserService {
+    /** Repository for accessing user data. */
     private UserRepository userRepository;
 
+    /**
+     * Retrieves the currently authenticated user from the security context.
+     * @return the authenticated User
+     * @throws RuntimeException if the user is unauthenticated or invalid
+     */
     @Transactional
     public User getAuthenticatedUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

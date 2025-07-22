@@ -30,23 +30,61 @@ import com.esaunders.TextbookExchange.service.UserService;
 
 import lombok.AllArgsConstructor;
 
+/**
+ * Controller for authentication-related endpoints.
+ * Handles login, registration, and user verification.
+ * @author Ethan Saunders
+ */
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/auth")
 @CrossOrigin(origins = "https://textbook-exchange-six.vercel.app", allowCredentials = "true")
 public class AuthController {
+
+    /**
+     * Repository for user data access.
+     */
     private UserRepository userRepository;
+
+    /**
+     * Service for user-related operations.
+     */
     private UserService userService;
+
+    /**
+     * Mapper for converting between User and UserDto.
+     */
     private UserMapper userMapper;
+
+    /**
+     * Authentication manager for processing authentication requests.
+     */
     private AuthenticationManager authenticationManager;
+
+    /**
+     * Password encoder for hashing user passwords.
+     */
     private PasswordEncoder passwordEncoder;
+
+    /**
+     * Service for JWT token operations.
+     */
     private JwtService jwtService;
 
+    /**
+     * Authenticates a user and returns a JWT token if successful.
+     *
+     * @param loginRequest the login request containing email and password
+     * @return a response entity with the JWT token or unauthorized status
+     */
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest loginRequest) {
         try {
             Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
+                new UsernamePasswordAuthenticationToken(
+                    loginRequest.getEmail(),
+                    loginRequest.getPassword()
+                )
             );
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
             SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -59,6 +97,12 @@ public class AuthController {
         }
     }
 
+    /**
+     * Registers a new user if the email is not already taken.
+     *
+     * @param request the registration request containing user details
+     * @return a response entity with the created user DTO or conflict status
+     */
     @PostMapping("/register")
     public ResponseEntity<UserDto> register(@RequestBody RegisterUser request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
@@ -73,6 +117,11 @@ public class AuthController {
             .body(userMapper.toUserDto(user));
     }
 
+    /**
+     * Verifies the authenticated user and returns their user DTO.
+     *
+     * @return a response entity with the user DTO or unauthorized status
+     */
     @GetMapping("/verify")
     public ResponseEntity<?> verifyUser() {
         User user = userService.getAuthenticatedUser();
