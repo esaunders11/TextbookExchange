@@ -33,7 +33,7 @@ import lombok.AllArgsConstructor;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/books")
-@CrossOrigin(origins = "https://textbook-exchange-six.vercel.app", allowCredentials = "true")
+@CrossOrigin(origins = {"https://textbook-exchange-six.vercel.app", "http://localhost:3000"}, allowCredentials = "true")
 public class ListingController {
 
     /**

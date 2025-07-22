@@ -61,7 +61,7 @@ const Register = ({ onLogin }) => {
           lastName: formData.lastName,
           email: formData.email,
           password: formData.password,
-          verified: true
+          verified: false
         }),
       });
 
@@ -72,7 +72,7 @@ const Register = ({ onLogin }) => {
 
       const data = await response.json();
       onLogin(data.user);
-      navigate('/login');
+      navigate('/verification');
     } catch (err) {
       setError("Registration Failed");
     } finally {

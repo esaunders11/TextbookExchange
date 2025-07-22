@@ -1,7 +1,9 @@
 package com.esaunders.TextbookExchange.controller;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +26,10 @@ import com.esaunders.TextbookExchange.dtos.RegisterUser;
 import com.esaunders.TextbookExchange.dtos.UserDto;
 import com.esaunders.TextbookExchange.mapper.UserMapper;
 import com.esaunders.TextbookExchange.model.User;
+import com.esaunders.TextbookExchange.model.VerificationToken;
 import com.esaunders.TextbookExchange.repository.UserRepository;
+import com.esaunders.TextbookExchange.repository.VerficationTokenRepository;
+import com.esaunders.TextbookExchange.service.EmailService;
 import com.esaunders.TextbookExchange.service.JwtService;
 import com.esaunders.TextbookExchange.service.UserService;
 
@@ -38,7 +43,7 @@ import lombok.AllArgsConstructor;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "https://textbook-exchange-six.vercel.app", allowCredentials = "true")
+@CrossOrigin(origins = {"https://textbook-exchange-six.vercel.app", "http://localhost:3000"}, allowCredentials = "true")
 public class AuthController {
 
     /**
@@ -52,6 +57,11 @@ public class AuthController {
     private UserService userService;
 
     /**
+     * Service for sending emails.
+     */
+    private EmailService emailService;
+
+    /**
      * Mapper for converting between User and UserDto.
      */
     private UserMapper userMapper;
@@ -60,6 +70,11 @@ public class AuthController {
      * Authentication manager for processing authentication requests.
      */
     private AuthenticationManager authenticationManager;
+
+    /**
+     * Repository for verification tokens.
+     */
+    private VerficationTokenRepository verificationTokenRepository;
 
     /**
      * Password encoder for hashing user passwords.
@@ -113,6 +128,15 @@ public class AuthController {
         User user = userMapper.toEntity(request);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
+        VerificationToken token = new VerificationToken();
+        token.setToken(UUID.randomUUID().toString());
+        token.setUser(user);
+        token.setExpiryTime(LocalDateTime.now().plusHours(1));
+        verificationTokenRepository.save(token);
+
+        String verifyUrl = "http://localhost:3000/verify?token=" + token;
+        emailService.sendEmail(user.getEmail(), "Verify your account", 
+            "Click the link to verify: " + verifyUrl);
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(userMapper.toUserDto(user));
     }
