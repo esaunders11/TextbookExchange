@@ -7,6 +7,8 @@ import Register from './pages/Register';
 import PostListing from './pages/PostListing';
 import MyListings from './pages/MyListings';
 import Profile from './pages/Profile';
+import Verification from './pages/Verification';
+import VerifyEmail from './services/VerifyEmail';
 import './App.css';
 
 function App() {
@@ -18,7 +20,7 @@ function App() {
     const token = localStorage.getItem('token');
     if (token) {
       // Verify token with backend
-      fetch('/api/auth/verify', {
+      fetch('/api/auth/user', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -90,6 +92,9 @@ function App() {
               path="/profile" 
               element={user ? <Profile user={user} /> : <Navigate to="/login" />} 
             />
+            <Route path="/verification" element={<Verification />} />
+            <Route path="/verify" element={<VerifyEmail />} />
+            
           </Routes>
         </main>
       </div>

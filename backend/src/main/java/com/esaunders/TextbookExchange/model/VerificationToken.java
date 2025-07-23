@@ -2,8 +2,10 @@ package com.esaunders.TextbookExchange.model;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,6 +15,8 @@ import lombok.NoArgsConstructor;
  * Used to verify user email addresses during the registration process.
  * @author Ethan Saunders
  */
+@Entity
+@Table(name = "verification_tokens")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -33,4 +37,5 @@ public class VerificationToken {
     public boolean isExpired() {
         return LocalDateTime.now().isAfter(expiryTime);
     }
+
 }

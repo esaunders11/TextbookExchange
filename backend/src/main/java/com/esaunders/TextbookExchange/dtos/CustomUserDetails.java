@@ -53,6 +53,15 @@ public class CustomUserDetails implements UserDetails {
     }
 
     /**
+     * Indicates whether the user is verified.
+     * 
+     * @return true if the user is verified, false otherwise
+     */
+    public boolean isVerified() {
+        return user.isVerified();
+    }
+
+    /**
      * Returns the user's unique ID.
      * 
      * @return the user's ID

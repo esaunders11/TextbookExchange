@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.esaunders.TextbookExchange.dtos.CustomUserDetails;
@@ -28,7 +29,7 @@ import com.esaunders.TextbookExchange.mapper.UserMapper;
 import com.esaunders.TextbookExchange.model.User;
 import com.esaunders.TextbookExchange.model.VerificationToken;
 import com.esaunders.TextbookExchange.repository.UserRepository;
-import com.esaunders.TextbookExchange.repository.VerficationTokenRepository;
+import com.esaunders.TextbookExchange.repository.VerificationTokenRepository;
 import com.esaunders.TextbookExchange.service.EmailService;
 import com.esaunders.TextbookExchange.service.JwtService;
 import com.esaunders.TextbookExchange.service.UserService;
@@ -46,44 +47,28 @@ import lombok.AllArgsConstructor;
 @CrossOrigin(origins = {"https://textbook-exchange-six.vercel.app", "http://localhost:3000"}, allowCredentials = "true")
 public class AuthController {
 
-    /**
-     * Repository for user data access.
-     */
+    /** Repository for user data access. */
     private UserRepository userRepository;
 
-    /**
-     * Service for user-related operations.
-     */
+    /** Service for user-related operations. */
     private UserService userService;
 
-    /**
-     * Service for sending emails.
-     */
+    /** Service for sending emails. */
     private EmailService emailService;
 
-    /**
-     * Mapper for converting between User and UserDto.
-     */
+    /** Mapper for converting between User and UserDto. */
     private UserMapper userMapper;
 
-    /**
-     * Authentication manager for processing authentication requests.
-     */
+    /** Authentication manager for processing authentication requests. */
     private AuthenticationManager authenticationManager;
 
-    /**
-     * Repository for verification tokens.
-     */
-    private VerficationTokenRepository verificationTokenRepository;
+    /** Repository for verification tokens. */
+    private VerificationTokenRepository verificationTokenRepository;
 
-    /**
-     * Password encoder for hashing user passwords.
-     */
+    /** Password encoder for hashing user passwords. */
     private PasswordEncoder passwordEncoder;
 
-    /**
-     * Service for JWT token operations.
-     */
+    /** Service for JWT token operations. */
     private JwtService jwtService;
 
     /**
@@ -102,6 +87,10 @@ public class AuthController {
                 )
             );
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            if (!userDetails.isVerified()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "User not verified"));
+            }
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtService.generateToken(userDetails);
             Map<String, String> response = new HashMap<>();
@@ -133,12 +122,30 @@ public class AuthController {
         token.setUser(user);
         token.setExpiryTime(LocalDateTime.now().plusHours(1));
         verificationTokenRepository.save(token);
-
-        String verifyUrl = "http://localhost:3000/verify?token=" + token;
-        emailService.sendEmail(user.getEmail(), "Verify your account", 
-            "Click the link to verify: " + verifyUrl);
+        try {
+            String verifyUrl = "http://localhost:3000/verify?token=" + token.getToken();
+            emailService.sendEmail(user.getEmail(), "Verify your account", 
+                "Copy the link in browser to verify: " + verifyUrl);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(null);
+        }
+        
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(userMapper.toUserDto(user));
+    }
+
+    @GetMapping("/verify")
+    public ResponseEntity<?> verify(@RequestParam String token) {
+        VerificationToken vToken = verificationTokenRepository.findByToken(token);
+        if (vToken != null && !vToken.isExpired()) {
+            User user = vToken.getUser();
+            user.setVerified(true);
+            userRepository.save(user);
+            verificationTokenRepository.delete(vToken);
+            return ResponseEntity.ok("Verified");
+        }
+        return ResponseEntity.badRequest().body("Invalid or expired token" + vToken.isExpired());
     }
 
     /**
@@ -146,8 +153,8 @@ public class AuthController {
      *
      * @return a response entity with the user DTO or unauthorized status
      */
-    @GetMapping("/verify")
-    public ResponseEntity<?> verifyUser() {
+    @GetMapping("/user")
+    public ResponseEntity<?> getUser() {
         User user = userService.getAuthenticatedUser();
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");

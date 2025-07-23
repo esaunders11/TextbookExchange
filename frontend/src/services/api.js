@@ -49,8 +49,8 @@ class ApiService {
     });
   }
 
-  async verifyToken() {
-    return this.request('/auth/verify', {
+  async getUser() {
+    return this.request('/auth/user', {
       method: 'GET',
     });
   }

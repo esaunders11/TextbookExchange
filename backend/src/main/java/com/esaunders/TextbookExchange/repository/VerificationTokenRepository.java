@@ -9,7 +9,7 @@ import com.esaunders.TextbookExchange.model.VerificationToken;
  * Extends JpaRepository for CRUD operations and custom queries.
  * @author Ethan Saunders
  */
-public interface VerficationTokenRepository extends JpaRepository<VerificationToken, Long> {
+public interface VerificationTokenRepository extends JpaRepository<VerificationToken, Long> {
     /**
      * Finds a verification token by its token string.
      * @param token the token string to search for

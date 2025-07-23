@@ -19,3 +19,13 @@ CREATE TABLE book_listings (
     posted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     owner_id INTEGER REFERENCES users(id) ON DELETE CASCADE
 );
+
+CREATE TABLE verification_tokens (
+    token VARCHAR(255) PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    expiry_time TIMESTAMP NOT NULL,
+    CONSTRAINT fk_user
+      FOREIGN KEY (user_id)
+      REFERENCES users(id)
+      ON DELETE CASCADE
+);
