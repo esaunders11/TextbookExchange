@@ -9,6 +9,7 @@ import MyListings from './pages/MyListings';
 import Profile from './pages/Profile';
 import Verification from './pages/Verification';
 import VerifyEmail from './services/VerifyEmail';
+import Chat from './pages/Chat';
 import './App.css';
 
 function App() {
@@ -94,6 +95,7 @@ function App() {
             />
             <Route path="/verification" element={<Verification />} />
             <Route path="/verify" element={<VerifyEmail />} />
+            <Route path="/chat/:recipientId" element={<Chat currentUserId={user?.id} />} />
             
           </Routes>
         </main>

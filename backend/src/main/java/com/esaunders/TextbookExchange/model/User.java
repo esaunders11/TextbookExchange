@@ -1,6 +1,9 @@
 package com.esaunders.TextbookExchange.model;
 
 import jakarta.persistence.Id;
+
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -42,4 +45,8 @@ public class User {
 
     /** Whether the user is verified. */
     private boolean verified;
+
+    /** The date the user was created. */
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
 }

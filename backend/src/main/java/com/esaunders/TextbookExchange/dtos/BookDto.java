@@ -38,6 +38,9 @@ public class BookDto {
     /** The ID of the user who owns the listing. */
     private Long ownerId;
 
+    /** The seller's information, represented as a UserDto. */
+    private UserDto seller;
+
     /** The date and time when the listing was posted. */
     private LocalDateTime postedAt;
 }

@@ -2,6 +2,16 @@ import React, { useState, useEffect } from 'react';
 import BookCard from '../components/BookCard';
 import SearchFilters from '../components/SearchFilters';
 
+function getUserIdFromToken(token) {
+  if (!token) return undefined;
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.sub || payload.id || payload.userId || payload.uid;
+  } catch (e) {
+    return undefined;
+  }
+}
+
 const Home = () => {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -10,12 +20,13 @@ const Home = () => {
   const [selectedCondition, setSelectedCondition] = useState('');
   const [priceRange, setPriceRange] = useState({ min: '', max: '' });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState(undefined);
 
   useEffect(() => {
     // Check if user is logged in
     const token = localStorage.getItem('token');
     setIsLoggedIn(!!token);
-    
+    setCurrentUserId(getUserIdFromToken(token));
     if (token) {
       fetchBooks();
     } else {
@@ -139,7 +150,7 @@ const Home = () => {
         ) : (
           <div className="card-grid">
             {filteredBooks.map(book => (
-              <BookCard key={book.id} book={book} />
+              <BookCard key={book.id} book={book} currentUserId={currentUserId} />
             ))}
           </div>
         )

@@ -99,7 +99,7 @@ public class SecurityConfig {
                 .requestMatchers(
                     "/api/auth/**",
                     "/api/books/**",
-                    "/api/listings/**"
+                    "/api/messages/**"
                 ).permitAll()
                 .anyRequest().authenticated()
             )

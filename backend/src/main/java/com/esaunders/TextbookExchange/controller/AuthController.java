@@ -116,6 +116,7 @@ public class AuthController {
 
         User user = userMapper.toEntity(request);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setCreatedAt(LocalDateTime.now());
         userRepository.save(user);
         VerificationToken token = new VerificationToken();
         token.setToken(UUID.randomUUID().toString());
@@ -145,7 +146,7 @@ public class AuthController {
             verificationTokenRepository.delete(vToken);
             return ResponseEntity.ok("Verified");
         }
-        return ResponseEntity.badRequest().body("Invalid or expired token" + vToken.isExpired());
+        return ResponseEntity.badRequest().body("Invalid or expired token");
     }
 
     /**

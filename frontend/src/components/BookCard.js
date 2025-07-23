@@ -1,7 +1,10 @@
 import React from 'react';
 import dayjs from 'dayjs';
+import { useNavigate } from 'react-router-dom';
 
-const BookCard = ({ book }) => {
+const BookCard = ({ book, currentUserId }) => {
+  const navigate = useNavigate();
+
   const getConditionClass = (condition) => {
     switch (condition?.toLowerCase()) {
       case 'new':
@@ -24,10 +27,11 @@ const BookCard = ({ book }) => {
     }).format(price);
   };
 
-  const handleContactSeller = () => {
-    // This would typically open a chat/messaging interface
-    // For now, we'll just show an alert
-    alert(`Contact ${book.seller?.firstName} ${book.seller?.lastName} about "${book.title}"`);
+  const handleContactSeller = (e) => {
+    e.preventDefault();
+    if (book.seller?.id && currentUserId) {
+      navigate(`/chat/${book.seller.id}`);
+    }
   };
 
   return (
@@ -69,6 +73,8 @@ const BookCard = ({ book }) => {
             className="btn btn-primary"
             onClick={handleContactSeller}
             style={{ padding: '0.5rem 1rem' }}
+            type="button"
+            disabled={!book.seller?.id || !currentUserId}
           >
             Contact Seller
           </button>

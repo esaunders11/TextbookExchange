@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 function VerifyEmail() {
   const [message, setMessage] = useState("Verifying...");
   const navigate = useNavigate();
   const location = useLocation();
+  const hasFetched = useRef(false);
 
   useEffect(() => {
+    if (hasFetched.current) return;
+    hasFetched.current = true;
     const params = new URLSearchParams(location.search);
     const token = params.get("token");
 
@@ -14,7 +17,7 @@ function VerifyEmail() {
       fetch(`/api/auth/verify?token=${token}`)
         .then((res) => {
           if (!res.ok) {
-            throw new Error(res.text());
+            throw new Error("Invalid or expired token");
           }
           return res.text();
         })

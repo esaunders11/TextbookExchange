@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.esaunders.TextbookExchange.dtos.BookDto;
 import com.esaunders.TextbookExchange.mapper.BookMapper;
+import com.esaunders.TextbookExchange.mapper.UserMapper;
 import com.esaunders.TextbookExchange.model.BookListing;
 import com.esaunders.TextbookExchange.model.User;
 import com.esaunders.TextbookExchange.repository.BookListingRepository;
+import com.esaunders.TextbookExchange.repository.UserRepository;
 import com.esaunders.TextbookExchange.service.ListingService;
 import com.esaunders.TextbookExchange.service.UserService;
 
@@ -42,9 +44,19 @@ public class ListingController {
     private BookListingRepository bookListingRepository;
 
     /**
+     * Repository for accessing user data.
+     */
+    private UserRepository userRepository;
+
+    /**
      * Mapper for converting between BookListing and BookDto.
      */
     private BookMapper bookMapper;
+
+    /**
+     * Service for listing-related business logic.
+     */
+    private UserMapper userMapper;
 
     /**
      * Service for listing-related business logic.
@@ -66,7 +78,13 @@ public class ListingController {
         User user = userService.getAuthenticatedUser();
 
         List<BookDto> books = bookListingRepository.findAll().stream()
-            .map(bookMapper::toBookDto)
+            .map(book -> {
+                BookDto dto = bookMapper.toBookDto(book);
+                if (book.getOwner() != null) {
+                    dto.setSeller(userMapper.toUserDto(book.getOwner()));
+                }
+                return dto;
+            })
             .filter(book -> user == null || book.getOwnerId() == null || !book.getOwnerId().equals(user.getId()))
             .sorted((a, b) -> {
                 if (a.getPostedAt() == null && b.getPostedAt() == null) return 0;
@@ -99,7 +117,13 @@ public class ListingController {
     ) {
         User user = userService.getAuthenticatedUser();
         List<BookDto> books = bookListingRepository.findAll().stream()
-            .map(bookMapper::toBookDto)
+            .map(book -> {
+                BookDto dto = bookMapper.toBookDto(book);
+                if (book.getOwner() != null) {
+                    dto.setSeller(userMapper.toUserDto(book.getOwner()));
+                }
+                return dto;
+            })
             .filter(book -> {
                 boolean matches = true;
                 if (user != null && book.getOwnerId() != null && book.getOwnerId().equals(user.getId())) {
