@@ -78,7 +78,6 @@ const ChatComponent = ({ userId, recipientId }) => {
             'Content-Type': 'application/json'
           }
         });
-        
         if (response.ok) {
           const data = await response.json();
           setMessages(data);
@@ -90,7 +89,6 @@ const ChatComponent = ({ userId, recipientId }) => {
         console.error("Error fetching messages:", error);
       }
     };
-
     fetchMessages();
 
     return () => {
@@ -100,6 +98,12 @@ const ChatComponent = ({ userId, recipientId }) => {
       }
     };
   }, [userId, recipientId, token]);
+
+  // Helper to get sender name for each message
+  const getSenderName = (msg) => {
+    if (msg.senderId === userId) return "Me";
+    return msg.senderName || "Unknown";
+  };
 
   const sendMessage = () => {
     if (!input.trim()) return;
@@ -131,7 +135,7 @@ const ChatComponent = ({ userId, recipientId }) => {
       <div style={{ height: 300, overflowY: "auto", border: '1px solid #ccc', padding: '10px' }}>
         {messages.map((m, i) => (
           <div key={i} style={{ marginBottom: '5px' }}>
-            <b>{m.senderId === userId ? "Me" : "Them"}:</b> {m.content}
+            <b>{getSenderName(m)}:</b> {m.content}
             <small style={{ color: '#666', marginLeft: '10px' }}>
               {m.timestamp ? new Date(m.timestamp).toLocaleTimeString() : ''}
             </small>

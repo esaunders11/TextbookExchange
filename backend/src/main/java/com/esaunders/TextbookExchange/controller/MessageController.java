@@ -96,7 +96,7 @@ public class MessageController {
     }
 
     @GetMapping("/between/{userId1}/{userId2}")
-    public List<Message> getMessages(@PathVariable Long userId1, @PathVariable Long userId2) {
+    public ResponseEntity<List<MessageDto>> getMessages(@PathVariable Long userId1, @PathVariable Long userId2) {
         try {
             System.out.println("Fetching messages between users: " + userId1 + " and " + userId2);
             
@@ -111,12 +111,15 @@ public class MessageController {
             sent.sort(Comparator.comparing(Message::getTimestamp));
             
             System.out.println("Found " + sent.size() + " messages between users");
-            return sent;
+            return sent
+                .stream()
+                .map(message -> messagesMapper.toDto(message, userRepository))
+                .collect(Collectors.collectingAndThen(Collectors.toList(), ResponseEntity::ok));
             
         } catch (Exception e) {
             System.err.println("Error fetching messages: " + e.getMessage());
             e.printStackTrace();
-            return new ArrayList<>(); // Return empty list on error
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ArrayList<>());
         }
     }
 }
