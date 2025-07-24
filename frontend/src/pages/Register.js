@@ -86,6 +86,10 @@ const Register = ({ onLogin }) => {
       <p>Join the NCSU Textbook Exchange community</p>
       
       {error && <div className="error">{error}</div>}
+
+      <div className="warning" style={{ color: 'orange', marginBottom: '1rem', fontWeight: 'bold' }}>
+        Do not use your official NCSU password. Create a unique password for this site.
+      </div>
       
       <form onSubmit={handleSubmit}>
         <div className="form-group">

@@ -10,6 +10,7 @@ import Profile from './pages/Profile';
 import Verification from './pages/Verification';
 import VerifyEmail from './services/VerifyEmail';
 import Chat from './pages/Chat';
+import Messages from './pages/Messages';
 import './App.css';
 
 function App() {
@@ -92,6 +93,10 @@ function App() {
             <Route 
               path="/profile" 
               element={user ? <Profile user={user} /> : <Navigate to="/login" />} 
+            />
+            <Route
+              path="/messages"
+              element={user ? <Messages user={user} /> : <Navigate to="/login" />}
             />
             <Route path="/verification" element={<Verification />} />
             <Route path="/verify" element={<VerifyEmail />} />

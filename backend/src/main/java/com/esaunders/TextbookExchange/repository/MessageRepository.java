@@ -26,4 +26,11 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
      * @return a list of messages received by the receiver from the sender
      */
     List<Message> findByReceiverIdAndSenderId(Long receiverId, Long senderId);
+
+    /**
+     * Finds all messages received by a specific receiver.
+     * @param receiverId the ID of the receiver
+     * @return a list of messages received by the receiver
+     */
+    List<Message> findByReceiverId(Long receiverId);
 }

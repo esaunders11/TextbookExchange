@@ -8,6 +8,9 @@ import java.util.function.Function;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+
+import com.esaunders.TextbookExchange.model.User;
+
 import org.springframework.beans.factory.annotation.Value;
 
 import io.jsonwebtoken.Claims;
@@ -127,4 +130,18 @@ public class JwtService {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
+
+    /**
+     * Validates the JWT token (checks if not expired and can be parsed).
+     * @param token the JWT token
+     * @return true if valid, false otherwise
+     */
+    public boolean validateToken(String token) {
+        try {
+            return !isTokenExpired(token);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 }

@@ -17,6 +17,7 @@ const Header = ({ user, onLogout }) => {
               <Link to="/post-listing">Post Listing</Link>
               <Link to="/my-listings">My Listings</Link>
               <Link to="/profile">Profile</Link>
+              <Link to="/messages">Messages</Link>
               <div className="auth-links">
                 <span>Welcome, {user.firstName}!</span>
                 <button className="btn btn-secondary" onClick={onLogout}>

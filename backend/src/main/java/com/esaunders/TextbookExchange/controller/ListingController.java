@@ -21,7 +21,6 @@ import com.esaunders.TextbookExchange.mapper.UserMapper;
 import com.esaunders.TextbookExchange.model.BookListing;
 import com.esaunders.TextbookExchange.model.User;
 import com.esaunders.TextbookExchange.repository.BookListingRepository;
-import com.esaunders.TextbookExchange.repository.UserRepository;
 import com.esaunders.TextbookExchange.service.ListingService;
 import com.esaunders.TextbookExchange.service.UserService;
 
@@ -43,10 +42,7 @@ public class ListingController {
      */
     private BookListingRepository bookListingRepository;
 
-    /**
-     * Repository for accessing user data.
-     */
-    private UserRepository userRepository;
+
 
     /**
      * Mapper for converting between BookListing and BookDto.
