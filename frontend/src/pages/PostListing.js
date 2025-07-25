@@ -47,10 +47,10 @@ const PostListing = ({ user }) => {
     title: data.title.trim(),
     author: data.author.trim(),
     isbn: data.isbn.trim(),
-    price: data.price, // will be parsed as float later
+    price: data.price,
     condition: data.condition.trim(),
     description: data.description.trim(),
-    courseCode: data.courseCode.replace(/\s+/g, '').toUpperCase(), // remove all spaces and uppercase
+    courseCode: data.courseCode.replace(/\s+/g, '').toUpperCase(),
   });
 
   const handleSubmit = async (e) => {

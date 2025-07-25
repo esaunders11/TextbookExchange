@@ -1,8 +1,5 @@
 import React from 'react';
 
-/**
- * Page shown after registration, instructing the user to check their email for a verification link.
- */
 const Verification = () => {
   return (
     <div className="verification-container" style={{ maxWidth: 500, margin: '3rem auto', textAlign: 'center' }}>

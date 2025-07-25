@@ -23,7 +23,6 @@ const Home = () => {
   const [currentUserId, setCurrentUserId] = useState(undefined);
 
   useEffect(() => {
-    // Check if user is logged in
     const token = localStorage.getItem('token');
     setIsLoggedIn(!!token);
     setCurrentUserId(getUserIdFromToken(token));

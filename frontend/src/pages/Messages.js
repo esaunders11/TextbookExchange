@@ -16,14 +16,12 @@ const Messages = ({ user }) => {
           headers: { Authorization: `Bearer ${token}` }
         });
         const data = await response.json();
-        // Group by sender, keep only most recent message per sender
         const grouped = {};
         data.forEach(msg => {
           if (!grouped[msg.senderId] || new Date(msg.timestamp) > new Date(grouped[msg.senderId].timestamp)) {
             grouped[msg.senderId] = msg;
           }
         });
-        // Convert to array and sort by most recent
         const sorted = Object.values(grouped).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
         setReceivedMessages(sorted);
       } catch (err) {

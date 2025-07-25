@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
 
-const API_URL = 'http://localhost:8080';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
 
 const ChatComponent = ({ userId, recipientId }) => {
   const [messages, setMessages] = useState([]);
@@ -12,14 +12,12 @@ const ChatComponent = ({ userId, recipientId }) => {
   const token = localStorage.getItem('token');
 
   useEffect(() => {
-    // Ensure we have a token
     if (!token) {
       console.error("No token found");
       setConnectionStatus("No token");
       return;
     }
 
-    // Pass token as query param for SockJS
     const wsUrl = `${API_URL}/ws?token=${encodeURIComponent(token)}`;
     console.log("Connecting to WebSocket at:", wsUrl);
     
@@ -69,7 +67,6 @@ const ChatComponent = ({ userId, recipientId }) => {
       setConnectionStatus("Connection Failed");
     }
 
-    // Fetch message history
     const fetchMessages = async () => {
       try {
         const response = await fetch(`${API_URL}/api/messages/between/${userId}/${recipientId}`, {
@@ -99,7 +96,6 @@ const ChatComponent = ({ userId, recipientId }) => {
     };
   }, [userId, recipientId, token]);
 
-  // Helper to get sender name for each message
   const getSenderName = (msg) => {
     if (msg.senderId === userId) return "Me";
     return msg.senderName || "Unknown";
