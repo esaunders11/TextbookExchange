@@ -40,5 +40,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://ec2-3-136-156-238.us-east-2.compute.amazonaws.com:8080"
+  "proxy": "https://textbookexchange-api.com:8080"
 }
