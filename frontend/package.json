@@ -40,5 +40,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "https://textbookexchange-api.com:8080"
+  "proxy": "https://textbookexchange-api.com"
 }
