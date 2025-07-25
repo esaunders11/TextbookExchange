@@ -6,6 +6,7 @@ target/
 !**/src/test/**/target/
 application-*.properties
 textbook-exchange-backend.pem
+.ssh
 
 ### STS ###
 .apt_generated

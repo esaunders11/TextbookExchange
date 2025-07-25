@@ -32,7 +32,6 @@ import com.esaunders.TextbookExchange.repository.UserRepository;
 import com.esaunders.TextbookExchange.repository.VerificationTokenRepository;
 import com.esaunders.TextbookExchange.service.EmailService;
 import com.esaunders.TextbookExchange.service.JwtService;
-import com.esaunders.TextbookExchange.service.S3Service;
 import com.esaunders.TextbookExchange.service.UserService;
 
 import lombok.AllArgsConstructor;
@@ -114,16 +113,23 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(null);
         }
-
         User user = userMapper.toEntity(request);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setCreatedAt(LocalDateTime.now());
-        userRepository.save(user);
         VerificationToken token = new VerificationToken();
-        token.setToken(UUID.randomUUID().toString());
-        token.setUser(user);
-        token.setExpiryTime(LocalDateTime.now().plusHours(1));
-        verificationTokenRepository.save(token);
+
+        try {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            user.setCreatedAt(LocalDateTime.now());
+            userRepository.save(user);
+            token.setToken(UUID.randomUUID().toString());
+            token.setUser(user);
+            token.setExpiryTime(LocalDateTime.now().plusHours(1));
+            verificationTokenRepository.save(token);
+        } catch (Exception e) {
+            System.out.println("Failed to register user: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(null);
+        }
+
         try {
             String verifyUrl = "http://localhost:3000/verify?token=" + token.getToken();
             emailService.sendEmail(user.getEmail(), "Verify your account", 
@@ -138,6 +144,12 @@ public class AuthController {
             .body(userMapper.toUserDto(user));
     }
 
+    /**
+     * Verifies a user using the provided token.
+     *
+     * @param token the verification token
+     * @return a response entity indicating success or error
+     */
     @GetMapping("/verify")
     public ResponseEntity<?> verify(@RequestParam String token) {
         VerificationToken vToken = verificationTokenRepository.findByToken(token);
@@ -161,6 +173,9 @@ public class AuthController {
         User user = userService.getAuthenticatedUser();
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
+        }
+        if (!user.isVerified()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not verified");
         }
         UserDto userDto = userMapper.toUserDto(user);
         return ResponseEntity.ok(userDto);
