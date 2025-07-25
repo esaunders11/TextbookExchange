@@ -111,6 +111,21 @@ const MyListings = ({ user }) => {
             <div key={listing.id} className="card">
               <div className="book-info">
                 <h3 className="book-title">{listing.title}</h3>
+                {listing.imageUrl && (
+                  <div className="book-image-container" style={{ textAlign: 'center', marginBottom: '1rem' }}>
+                    {console.log('Image URL:', listing.imageUrl)}
+                    <img
+                      src={listing.imageUrl}
+                      style={{
+                        maxWidth: '200px',
+                        maxHeight: '250px',
+                        objectFit: 'cover',
+                        borderRadius: '8px',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                      }}
+                    />
+                  </div>
+                )}
                 <p className="book-author">by {listing.author}</p>
                 
                 {listing.courseCode && (

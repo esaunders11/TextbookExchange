@@ -12,6 +12,7 @@ const PostListing = ({ user }) => {
     description: '',
     courseCode: ''
   });
+  const [imageFile, setImageFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -31,6 +32,16 @@ const PostListing = ({ user }) => {
     }));
   };
 
+  const handleFileChange = (e) => {
+    setImageFile(e.target.files[0]);
+  };
+
+  const validateImage = (file) => {
+    if (!file) return false;
+    const allowedTypes = ['image/jpeg', 'image/png'];
+    return allowedTypes.includes(file.type);
+  };
+
   const sanitizeFormData = (data) => ({
     ...data,
     title: data.title.trim(),
@@ -48,19 +59,37 @@ const PostListing = ({ user }) => {
     setError('');
     setSuccess('');
 
+    if (!imageFile) {
+      setError('A book image is required.');
+      setLoading(false);
+      return;
+    }
+    if (!validateImage(imageFile)) {
+      setError('Please upload a valid image (JPEG or PNG).');
+      setLoading(false);
+      return;
+    }
+
     try {
       const token = localStorage.getItem('token');
       const cleanedData = sanitizeFormData(formData);
+
+      const formDataToSend = new FormData();
+      formDataToSend.append('request', new Blob([JSON.stringify({
+        ...cleanedData,
+        price: parseFloat(cleanedData.price)
+      })], { type: 'application/json' }));
+
+      if (imageFile) {
+        formDataToSend.append('image', imageFile);
+      }
+
       const response = await fetch('/api/books/post-listing', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({
-          ...cleanedData,
-          price: parseFloat(cleanedData.price)
-        }),
+        body: formDataToSend
       });
 
       if (!response.ok) {
@@ -78,6 +107,7 @@ const PostListing = ({ user }) => {
         description: '',
         courseCode: ''
       });
+      setImageFile(null);
       
       setTimeout(() => {
         navigate('/my-listings');
@@ -190,6 +220,18 @@ const PostListing = ({ user }) => {
             onChange={handleChange}
             placeholder="Additional details about the book (highlighting, wear, etc.)"
             rows="4"
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="image">Upload Image</label>
+          <input
+            type="file"
+            id="image"
+            name="image"
+            accept="image/*"
+            onChange={handleFileChange}
+            required
           />
         </div>
 

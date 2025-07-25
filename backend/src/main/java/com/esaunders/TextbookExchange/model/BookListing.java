@@ -60,4 +60,7 @@ public class BookListing {
     /** The date and time when the listing was posted. */
     @Column(name = "posted_at")
     private LocalDateTime postedAt;
+
+    /** The URL of the book's cover image. */
+    private String imageUrl;
 }

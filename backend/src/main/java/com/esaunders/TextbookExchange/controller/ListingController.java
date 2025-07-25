@@ -4,24 +4,28 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.esaunders.TextbookExchange.dtos.BookDto;
+import com.esaunders.TextbookExchange.dtos.BookRequest;
 import com.esaunders.TextbookExchange.mapper.BookMapper;
 import com.esaunders.TextbookExchange.mapper.UserMapper;
 import com.esaunders.TextbookExchange.model.BookListing;
 import com.esaunders.TextbookExchange.model.User;
 import com.esaunders.TextbookExchange.repository.BookListingRepository;
 import com.esaunders.TextbookExchange.service.ListingService;
+import com.esaunders.TextbookExchange.service.S3Service;
 import com.esaunders.TextbookExchange.service.UserService;
 
 import lombok.AllArgsConstructor;
@@ -37,32 +41,23 @@ import lombok.AllArgsConstructor;
 @CrossOrigin(origins = {"https://textbook-exchange-six.vercel.app", "http://localhost:3000"}, allowCredentials = "true")
 public class ListingController {
 
-    /**
-     * Repository for accessing book listings.
-     */
+    /** Repository for accessing book listings. */
     private BookListingRepository bookListingRepository;
 
-
-
-    /**
-     * Mapper for converting between BookListing and BookDto.
-     */
+    /** Mapper for converting between BookListing and BookDto.*/
     private BookMapper bookMapper;
 
-    /**
-     * Service for listing-related business logic.
-     */
+    /** Service for listing-related business logic. */
     private UserMapper userMapper;
 
-    /**
-     * Service for listing-related business logic.
-     */
+    /** Service for listing-related business logic. */
     private ListingService listingService;
 
-    /**
-     * Service for user-related operations.
-     */
+    /** Service for user-related operations. */
     private UserService userService;
+
+    /** Service for S3 operations. */
+    private S3Service s3Service;
 
     /**
      * Returns the 10 most recent book listings, excluding the current user's own listings.
@@ -152,19 +147,43 @@ public class ListingController {
      * @param bookDto the book listing data
      * @return a response entity indicating success or error
      */
-    @PostMapping("/post-listing")
-    public ResponseEntity<?> postBookListing(@RequestBody BookDto bookDto) {
+    @PostMapping(path = "/post-listing", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<?> postBookListing(
+        @RequestPart("request") BookRequest request,
+        @RequestPart("image") MultipartFile image
+    ) {
         User user = userService.getAuthenticatedUser();
         if (user == null) {
             return ResponseEntity.status(401).build();
         }
 
-        BookListing bookListing = bookMapper.toEntity(bookDto);
+        if (image == null || image.isEmpty()) {
+            return ResponseEntity.badRequest().body("Book image is required.");
+        }
+        // Validate image type
+        String contentType = image.getContentType();
+        if (!("image/jpeg".equals(contentType) || "image/png".equals(contentType))) {
+            return ResponseEntity.badRequest().body("Invalid image type. Only JPEG and PNG are allowed.");
+        }
+
+        BookListing bookListing = bookMapper.toEntity(request);
         if (!listingService.checkCourseCodeValid(bookListing.getCourseCode())) {
             return ResponseEntity.badRequest().body("Invalid course code format");
         }
         bookListing.setOwner(user);
         bookListing.setPostedAt(LocalDateTime.now());
+
+        try {
+            String ext = "jpg";
+            if ("image/png".equals(contentType)) ext = "png";
+            String key = "book-images/" + System.currentTimeMillis() + "-" + user.getId() + "." + ext;
+            String imageUrl = s3Service.uploadFile(image, key);
+            bookListing.setImageUrl(imageUrl);
+        } catch (Exception e) {
+            System.out.println("Failed to upload image: " + e.getMessage());
+            return ResponseEntity.status(500).body("Image upload failed: " + e.getMessage());
+        }
+
         bookListingRepository.save(bookListing);
         return ResponseEntity.ok().build();
     }

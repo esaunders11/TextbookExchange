@@ -4,6 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import com.esaunders.TextbookExchange.dtos.BookDto;
+import com.esaunders.TextbookExchange.dtos.BookRequest;
 import com.esaunders.TextbookExchange.model.BookListing;
 
 /**
@@ -30,4 +31,13 @@ public interface BookMapper {
      * @return the mapped BookListing entity
      */
     BookListing toEntity(BookDto bookDto);
+
+    /**
+     * Maps a BookRequest to a BookListing entity.
+     * This is used for creating new book listings from requests.
+     *
+     * @param bookRequest the BookRequest containing the details for the new listing
+     * @return the mapped BookListing entity
+     */
+    BookListing toEntity(BookRequest bookRequest);
 }

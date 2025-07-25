@@ -32,6 +32,7 @@ import com.esaunders.TextbookExchange.repository.UserRepository;
 import com.esaunders.TextbookExchange.repository.VerificationTokenRepository;
 import com.esaunders.TextbookExchange.service.EmailService;
 import com.esaunders.TextbookExchange.service.JwtService;
+import com.esaunders.TextbookExchange.service.S3Service;
 import com.esaunders.TextbookExchange.service.UserService;
 
 import lombok.AllArgsConstructor;
@@ -128,6 +129,7 @@ public class AuthController {
             emailService.sendEmail(user.getEmail(), "Verify your account", 
                 "Copy the link in browser to verify: " + verifyUrl);
         } catch (Exception e) {
+            System.out.println("Failed to send verification email: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(null);
         }

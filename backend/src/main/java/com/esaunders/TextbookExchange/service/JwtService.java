@@ -9,8 +9,6 @@ import java.util.function.Function;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import com.esaunders.TextbookExchange.model.User;
-
 import org.springframework.beans.factory.annotation.Value;
 
 import io.jsonwebtoken.Claims;

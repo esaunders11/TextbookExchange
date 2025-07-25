@@ -10,7 +10,7 @@ import lombok.Data;
  * @author Ethan Saunders
  */
 @Data
-public class BookDto {
+public class BookRequest {
     /** The unique identifier of the book listing. */
     private Long id;
 
@@ -43,7 +43,5 @@ public class BookDto {
 
     /** The date and time when the listing was posted. */
     private LocalDateTime postedAt;
-
-    /** The URL of the book's cover image. */
-    private String imageUrl;
 }
+

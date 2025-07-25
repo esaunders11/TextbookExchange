@@ -36,8 +36,24 @@ const BookCard = ({ book, currentUserId }) => {
 
   return (
     <div className="card book-card">
+      {console.log('Image URL:', book.imageUrl)}
       <div className="book-info">
         <h3 className="book-title">{book.title}</h3>
+        {book.imageUrl && (
+          <div className="book-image-container" style={{ textAlign: 'center', marginBottom: '1rem' }}>
+            <img
+              src={book.imageUrl}
+              alt={`Cover of ${book.title}`}
+              style={{
+                maxWidth: '200px',
+                maxHeight: '250px',
+                objectFit: 'cover',
+                borderRadius: '8px',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+              }}
+            />
+          </div>
+        )}
         <p className="book-author">by {book.author}</p>
         
         {book.courseCode && (

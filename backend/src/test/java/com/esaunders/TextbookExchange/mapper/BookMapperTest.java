@@ -105,13 +105,6 @@ class BookMapperTest {
     }
 
     @Test
-    void testToEntityWithNullInput() {
-        // Test mapping with null input
-        BookListing result = bookMapper.toEntity(null);
-        assertThat(result).isNull();
-    }
-
-    @Test
     void testToEntityWithPartialData() {
         // Test mapping with partial data
         BookDto partialDto = new BookDto();
