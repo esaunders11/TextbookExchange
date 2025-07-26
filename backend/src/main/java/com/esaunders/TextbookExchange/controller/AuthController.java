@@ -135,7 +135,7 @@ public class AuthController {
         }
 
         try {
-            String verifyUrl = "http://localhost:3000/verify?token=" + token.getToken();
+            String verifyUrl = "https://textbook-exchange-six.vercel.app/verify?token=" + token.getToken();
             emailService.sendEmail(user.getEmail(), "Verify your account", 
                 "Copy the link in browser to verify: " + verifyUrl);
         } catch (Exception e) {

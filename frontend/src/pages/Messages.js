@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MessageCard from '../components/MessageCard';
+import App from '../App';
 
 
 const Messages = ({ user }) => {
@@ -9,10 +10,12 @@ const Messages = ({ user }) => {
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
 
+  const API_BASE_URL = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const response = await fetch(`/api/messages/received/${user.id}`, {
+        const response = await fetch(`${API_BASE_URL}/api/messages/received/${user.id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         const data = await response.json();

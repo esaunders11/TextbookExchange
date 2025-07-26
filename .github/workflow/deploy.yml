@@ -8,8 +8,9 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Set up JDK 17
@@ -30,13 +31,16 @@ jobs:
           source: backend/target/TextbookExchange-0.0.1.jar
           target: /home/${{ secrets.EC2_USER }}/TextbookExchange-0.0.1.jar
 
-      - name: Restart Backend on EC2
+      - name: Restart Spring Boot App on EC2
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            # If you use systemd (recommended):
-            sudo systemctl restart myapp || \
-            (nohup java -jar /home/${{ secrets.EC2_USER }}/myapp.jar > /home/${{ secrets.EC2_USER }}/app.log 2>&1 &)
+            echo "Reloading systemd and restarting app..."
+            sudo systemctl daemon-reload
+            sudo systemctl restart textbook
+            echo "App restarted. Showing status:"
+            sudo systemctl status textbook --no-pager
+

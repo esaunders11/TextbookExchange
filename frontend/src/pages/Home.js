@@ -22,6 +22,8 @@ const Home = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUserId, setCurrentUserId] = useState(undefined);
 
+  const API_BASE_URL = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     setIsLoggedIn(!!token);
@@ -37,7 +39,7 @@ const Home = () => {
     try {
       const token = localStorage.getItem('token');
       setLoading(true);
-      const response = await fetch('/api/books', {
+      const response = await fetch(`${API_BASE_URL}/api/books`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -65,7 +67,7 @@ const Home = () => {
       if (filters.minPrice) queryParams.append('minPrice', filters.minPrice);
       if (filters.maxPrice) queryParams.append('maxPrice', filters.maxPrice);
       
-      const response = await fetch(`/api/books/search?${queryParams}`, {
+      const response = await fetch(`${API_BASE_URL}/api/books/search?${queryParams}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
