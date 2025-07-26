@@ -14,4 +14,7 @@ import com.esaunders.TextbookExchange.model.User;
 public interface UserRepository extends JpaRepository<User, Long> {
     /** Finds a user by their email address. */
     Optional<User> findByEmail(String email);
+
+    /** Finds a user by their username. */
+    Optional<User> findByUsername(String username);
 }

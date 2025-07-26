@@ -18,6 +18,9 @@ public class UserDto {
     /** The user's last name. */
     private String lastName;
 
+    /** The user's username (must be unique and not null). */
+    private String username;
+
     /** The user's email address. */
     private String email;
 }

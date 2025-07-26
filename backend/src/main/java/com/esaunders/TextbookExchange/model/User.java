@@ -35,6 +35,10 @@ public class User {
     /** The user's last name. */
     private String lastName;
 
+    /** The user's username (must be unique and not null). */
+    @Column(unique = true, nullable = false)
+    private String username;
+
     /** The user's email address (must be unique and not null). */
     @Column(unique = true, nullable = false)
     private String email;

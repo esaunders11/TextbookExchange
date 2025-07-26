@@ -51,7 +51,7 @@ public class MessageController {
      */
     @MessageMapping("/chat")
     @SendTo("/topic/messages")
-    public Message send(Message message) {
+    public MessageDto send(Message message) {
         try {
             System.out.println("Received message via WebSocket: " + message);
             
@@ -63,23 +63,24 @@ public class MessageController {
             // Validate message content
             if (message.getContent() == null || message.getContent().trim().isEmpty()) {
                 System.err.println("Message content is null or empty");
-                return message;
+                return messagesMapper.toDto(message, userRepository);
             }
             
             if (message.getSenderId() == null || message.getReceiverId() == null) {
                 System.err.println("SenderId or ReceiverId is null");
-                return message;
+                return messagesMapper.toDto(message, userRepository);
             }
             
             message.setTimestamp(LocalDateTime.now());
             Message savedMessage = messageRepository.save(message);
+            MessageDto savedMessageDto = messagesMapper.toDto(savedMessage, userRepository);
             System.out.println("Message saved successfully: " + savedMessage);
-            return savedMessage;
+            return savedMessageDto;
             
         } catch (Exception e) {
             System.err.println("Error processing message: " + e.getMessage());
             e.printStackTrace();
-            return message;
+            return messagesMapper.toDto(message, userRepository);
         }
     }
 
