@@ -22,7 +22,7 @@ const Home = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUserId, setCurrentUserId] = useState(undefined);
 
-  const API_BASE_URL = process.env.REACT_APP_API_URL + "/api";
+  const API_BASE_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const token = localStorage.getItem('token');

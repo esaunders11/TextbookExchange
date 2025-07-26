@@ -10,7 +10,7 @@ const Messages = ({ user }) => {
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
 
-  const API_BASE_URL = process.env.REACT_APP_API_URL + "/api";
+  const API_BASE_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const fetchMessages = async () => {

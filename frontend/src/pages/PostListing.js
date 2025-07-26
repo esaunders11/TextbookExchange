@@ -17,7 +17,7 @@ const PostListing = ({ user }) => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  const API_BASE_URL = process.env.REACT_APP_API_URL + "/api";
+  const API_BASE_URL = process.env.REACT_APP_API_URL;
 
   const conditions = [
     { value: 'NEW', label: 'New' },

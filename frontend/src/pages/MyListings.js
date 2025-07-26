@@ -7,7 +7,7 @@ const MyListings = ({ user }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const API_BASE_URL = process.env.REACT_APP_API_URL + "/api";
+  const API_BASE_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     fetchMyListings();

@@ -7,6 +7,8 @@ function VerifyEmail() {
   const location = useLocation();
   const hasFetched = useRef(false);
 
+  const API_BASE_URL = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
     if (hasFetched.current) return;
     hasFetched.current = true;
@@ -14,7 +16,7 @@ function VerifyEmail() {
     const token = params.get("token");
 
     if (token) {
-      fetch(`/api/auth/verify?token=${token}`)
+      fetch(`${API_BASE_URL}/api/auth/verify?token=${token}`)
         .then((res) => {
           if (!res.ok) {
             throw new Error("Invalid or expired token");
