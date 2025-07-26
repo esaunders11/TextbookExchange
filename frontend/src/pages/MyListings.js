@@ -7,6 +7,8 @@ const MyListings = ({ user }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  const API_BASE_URL = process.env.REACT_APP_API_URL + "/api";
+
   useEffect(() => {
     fetchMyListings();
   }, []);
@@ -14,7 +16,7 @@ const MyListings = ({ user }) => {
   const fetchMyListings = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/books/my-listings', {
+      const response = await fetch(`${API_BASE_URL}/api/books/my-listings`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -41,7 +43,7 @@ const MyListings = ({ user }) => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`/api/books/${bookId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/books/${bookId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`

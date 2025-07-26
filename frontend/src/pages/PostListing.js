@@ -17,6 +17,8 @@ const PostListing = ({ user }) => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
+  const API_BASE_URL = process.env.REACT_APP_API_URL + "/api";
+
   const conditions = [
     { value: 'NEW', label: 'New' },
     { value: 'GOOD', label: 'Good' },
@@ -84,7 +86,7 @@ const PostListing = ({ user }) => {
         formDataToSend.append('image', imageFile);
       }
 
-      const response = await fetch('/api/books/post-listing', {
+      const response = await fetch(`${API_BASE_URL}/api/books/post-listing`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
