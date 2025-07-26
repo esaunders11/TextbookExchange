@@ -1,8 +1,8 @@
     {
       "rewrites": [
         {
-          "source": "/api/:path*",
-          "destination": "https://textbookexchange-api.com/:path*"
+          "source": "/api/:match*",
+          "destination": "https://textbookexchange-api.com/api/:match*"
         }
       ]
     }
