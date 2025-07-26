@@ -126,7 +126,7 @@ const Register = ({ onLogin }) => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="lastName">Username</label>
+          <label htmlFor="username">Username</label>
           <input
             type="text"
             id="username"
