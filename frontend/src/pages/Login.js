@@ -20,8 +20,8 @@ const Login = ({ onLogin }) => {
   };
 
   function sanitizeFormData(data) {
-    if (!email.endsWith('@ncsu.edu')) {
-      email += '@ncsu.edu';
+    if (!data.email.endsWith('@ncsu.edu')) {
+      data.email += '@ncsu.edu';
     }
     return {
       ...data,
