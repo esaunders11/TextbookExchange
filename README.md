@@ -58,4 +58,4 @@ You can try out TextbookExchange here:
 
 ---
 
-*This README reflects the personal and non-collaborative nature of this project. For any questions, please contact the author directly.*
+*This README reflects the personal and non-collaborative nature of this project. For any questions, please contact me directly.*
