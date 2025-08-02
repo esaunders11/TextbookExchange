@@ -40,6 +40,6 @@ public interface MessagesMapper {
      */
     default String getSenderName(Long senderId, UserRepository userRepository) {
         User user = userRepository.findById(senderId).orElse(null);
-        return user != null ? user.getFirstName() + " " + user.getLastName() : "Unknown";
+        return user != null ? user.getUsername() : "Unknown";
     }
 }

@@ -117,6 +117,10 @@ public class AuthController {
         VerificationToken token = new VerificationToken();
 
         try {
+            if (userRepository.findByUsername(request.getUsername()).isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(null);
+            }
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             user.setCreatedAt(LocalDateTime.now());
             userRepository.save(user);

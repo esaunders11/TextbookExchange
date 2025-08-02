@@ -61,6 +61,7 @@ const Register = ({ onLogin }) => {
         body: JSON.stringify({
           firstName: formData.firstName,
           lastName: formData.lastName,
+          username: formData.username,
           email: formData.email,
           password: formData.password,
           verified: false
@@ -68,6 +69,11 @@ const Register = ({ onLogin }) => {
       });
 
       if (!response.ok) {
+        if (response.status === 409) {
+          setError('Email already registered or Username already taken');
+        } else {
+          setError('Registration failed. Please try again.');
+        }
         const errorData = await response.json();
         throw new Error(errorData.message || 'Registration failed');
       }
@@ -117,6 +123,19 @@ const Register = ({ onLogin }) => {
             onChange={handleChange}
             required
             placeholder="Enter your last name"
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="username">Username</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+            required
+            placeholder="Enter your username"
           />
         </div>
 

@@ -19,10 +19,22 @@ const Login = ({ onLogin }) => {
     }));
   };
 
+  function sanitizeFormData(data) {
+    if (!data.email.endsWith('@ncsu.edu')) {
+      data.email += '@ncsu.edu';
+    }
+    return {
+      ...data,
+      email: data.email.trim(),
+      password: data.password.trim()
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
+    const sanitizedData = sanitizeFormData(formData);
 
     try {
       const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
@@ -30,7 +42,7 @@ const Login = ({ onLogin }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(sanitizedData),
       });
 
       if (!response.ok) {
