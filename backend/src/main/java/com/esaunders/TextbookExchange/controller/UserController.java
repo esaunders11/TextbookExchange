@@ -1,5 +1,6 @@
 package com.esaunders.TextbookExchange.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,8 +27,11 @@ public class UserController {
     private final UserMapper userMapper;
 
     @GetMapping("/{id}")
-    public UserDto getUser(@PathVariable Long id) {
+    public ResponseEntity<UserDto> getUser(@PathVariable Long id) {
         var user = userRepository.getUserById(id);
-        return userMapper.toUserDto(user);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(userMapper.toUserDto(user));
     }
 }
