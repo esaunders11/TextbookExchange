@@ -22,7 +22,7 @@ import lombok.AllArgsConstructor;
 @RestController
 @RequestMapping("/api/users/profile")
 @AllArgsConstructor
-@CrossOrigin(origins = {"http://textbook-exchange-4ago.vercel.app", "http://localhost:3000"}, allowCredentials = "true")
+@CrossOrigin(origins = {"http://textbook-exchange-4ago.vercel.app", "http://localhost:3000", "http://localhost:4000"}, allowCredentials = "true")
 public class ProfileController {
 
     /**
