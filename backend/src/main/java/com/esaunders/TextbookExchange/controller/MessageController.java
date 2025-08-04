@@ -29,7 +29,7 @@ import java.util.ArrayList;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/messages")
-@CrossOrigin(origins = {"https://textbook-exchange-six.vercel.app", "http://localhost:3000"}, allowCredentials = "true")
+@CrossOrigin(origins = {"https://textbook-exchange-six.vercel.app", "http://localhost:3000", "http://localhost:4000"}, allowCredentials = "true")
 public class MessageController {
 
     /** Repository for message entities. */

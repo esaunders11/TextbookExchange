@@ -38,7 +38,7 @@ import lombok.AllArgsConstructor;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/books")
-@CrossOrigin(origins = {"https://textbook-exchange-six.vercel.app", "http://localhost:3000"}, allowCredentials = "true")
+@CrossOrigin(origins = {"https://textbook-exchange-six.vercel.app", "http://localhost:3000", "http://localhost:4000"}, allowCredentials = "true")
 public class ListingController {
 
     /** Repository for accessing book listings. */
@@ -212,6 +212,26 @@ public class ListingController {
 
         bookListingRepository.delete(bookListing);
         return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Gets a book listing by its ID.
+     *
+     * @param id the ID of the book listing
+     * @return a response entity with the BookDto or not found status
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<BookDto> getBookById(@PathVariable Long id) {
+        BookListing bookListing = bookListingRepository.findById(id).orElse(null);
+        if (bookListing == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        BookDto bookDto = bookMapper.toBookDto(bookListing);
+        if (bookListing.getOwner() != null) {
+            bookDto.setSeller(userMapper.toUserDto(bookListing.getOwner()));
+        }
+        return ResponseEntity.ok(bookDto);
     }
 
     /**
